@@ -12,7 +12,10 @@ func TestListMovieDirs(t *testing.T) {
 		"Arctic (2018)",
 		"Predator (1987)",
 	}
-	dirs := listMovieDirs()
+	dirs, err := listMovieDirs()
+	if err != nil {
+		t.Fatalf("Failed to list movie directories: %v", err)
+	}
 	for _, d := range dirs {
 		// t.Logf("Found movie directory: %s, name: %s, nfo: %s", d.Path(), d.Name(), d.NfoPath())
 

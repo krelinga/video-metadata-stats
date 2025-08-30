@@ -5,11 +5,11 @@ import (
 	"path/filepath"
 )
 
-func listMovieDirs() []movieDir {
+func listMovieDirs() ([]movieDir, error) {
 	const baseDir = "/nas/media/Movies"
 	entries, err := os.ReadDir(baseDir)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	dirs := []movieDir{}
 	for _, entry := range entries {
@@ -17,5 +17,5 @@ func listMovieDirs() []movieDir {
 			dirs = append(dirs, movieDir(filepath.Join(baseDir, entry.Name())))
 		}
 	}
-	return dirs
+	return dirs, nil
 }
