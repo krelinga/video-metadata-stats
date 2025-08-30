@@ -36,3 +36,11 @@ func TestTagPathAppend(t *testing.T) {
 		t.Errorf("expected 'a/b/c/d', got %q", p.String())
 	}
 }
+
+func TestEmptyTagPath(t *testing.T) {
+	empty := newTagPath()
+	a := empty.Append("a")
+	if a.String() != "a" {
+		t.Errorf("expected 'a', got %q", a.String())
+	}
+}

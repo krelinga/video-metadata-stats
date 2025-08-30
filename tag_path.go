@@ -29,6 +29,9 @@ func (p tagPath) Parts() []string {
 			panic(err)
 		}
 	}
+	if len(parts) == 1 && parts[0] == "" {
+		return []string{}
+	}
 	return parts
 }
 
