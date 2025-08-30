@@ -5,17 +5,17 @@ import (
 )
 
 type nfo struct {
-	TagCounts map[string]int
+	TagCounts map[tagPath]int
 }
 
-func makeTagCounts(doc *etree.Document) map[string]int {
-	counts := make(map[string]int)
+func makeTagCounts(doc *etree.Document) map[tagPath]int {
+	counts := make(map[tagPath]int)
 	movie := doc.FindElement("movie")
 	if movie == nil {
 		return counts
 	}
 	for _, elem := range movie.ChildElements() {
-		counts[elem.Tag]++
+		counts[newTagPath(elem.Tag)]++
 	}
 	return counts
 }
