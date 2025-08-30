@@ -9,7 +9,9 @@ func TestReadNfo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to list movie directories: %v", err)
 	}
-	doc, err := readNfo(movieDirs[0].NfoPath())
+	movieDir := movieDirs[0] // Just test the first one for simplicity
+	t.Logf("Testing NFO read for movie directory: %s", movieDir.Path())
+	doc, err := readNfo(movieDir.NfoPath())
 	if err != nil {
 		t.Fatalf("Failed to read NFO file: %v", err)
 	}

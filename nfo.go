@@ -10,14 +10,16 @@ type nfo struct {
 
 func makeTagCounts(doc *etree.Document) map[tagPath]int {
 	counts := make(map[tagPath]int)
-	movie := doc.FindElement("movie")
-	if movie == nil {
-		return counts
-	}
-	for _, elem := range movie.ChildElements() {
-		counts[newTagPath(elem.Tag)]++
-	}
+	recursiveTagCounts(&doc.Element, newTagPath(), counts)
 	return counts
+}
+
+func recursiveTagCounts(elem *etree.Element, current tagPath, counts map[tagPath]int) {
+	for _, child := range elem.ChildElements() {
+		childPath := current.Append(child.Tag)
+		counts[childPath]++
+		recursiveTagCounts(child, childPath, counts)
+	}
 }
 
 // readNfo reads the XML file at the given path and returns the etree.Document representation of the DOM.
