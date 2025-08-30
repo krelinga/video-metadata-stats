@@ -12,6 +12,14 @@ func TestListMovieDirs(t *testing.T) {
 		"Arctic (2018)",
 		"Predator (1987)",
 	}
+	moviesMissingImages := []string{
+		"A Few Good Men (1992)",
+		"Deep Water (2006)",
+		"Ice People (2009)",
+		"Over the Top (1987)",
+		"Primer (2004)",
+		"The Last Boy Scout (1991)",
+	}
 	dirs, err := listMovieDirs()
 	if err != nil {
 		t.Fatalf("Failed to list movie directories: %v", err)
@@ -37,5 +45,13 @@ func TestListMovieDirs(t *testing.T) {
 			}
 		}
 
+		if hasImages, err := d.HasImages(); err != nil {
+			t.Errorf("Failed to check for images in directory: %s, error: %v", d.Path(), err)
+			continue
+		} else if !hasImages && !slices.Contains(moviesMissingImages, d.Name()) {
+			t.Errorf("No images found in directory: %s", d.Path())
+		} else if hasImages && slices.Contains(moviesMissingImages, d.Name()) {
+			t.Errorf("Unexpected images found in directory: %s", d.Path())
+		}
 	}
 }
