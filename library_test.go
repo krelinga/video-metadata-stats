@@ -17,8 +17,6 @@ func TestListMovieDirs(t *testing.T) {
 		t.Fatalf("Failed to list movie directories: %v", err)
 	}
 	for _, d := range dirs {
-		// t.Logf("Found movie directory: %s, name: %s, nfo: %s", d.Path(), d.Name(), d.NfoPath())
-
 		info, err := os.Stat(d.Path())
 		if err != nil {
 			t.Errorf("Path does not exist: %s, error: %v", d.Path(), err)
