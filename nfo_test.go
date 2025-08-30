@@ -16,4 +16,10 @@ func TestReadNfo(t *testing.T) {
 	if doc == nil {
 		t.Fatal("Expected non-nil document")
 	}
+	if len(doc.TagCounts) == 0 {
+		t.Fatal("Expected non-empty tag counts")
+	}
+	for tag, count := range doc.TagCounts {
+		t.Logf("Found %d occurrences of tag: %s", count, tag)
+	}
 }
