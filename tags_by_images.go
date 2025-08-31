@@ -18,6 +18,15 @@ func tagsAbsentInDirsWithoutImages(stats []*dirStats) []tagPath {
 			statsWithoutImages = append(statsWithoutImages, stat)
 		}
 	}
+
+	if len(statsWithoutImages) > 0 {
+		fmt.Println("Directories without images:")
+		for _, stat := range statsWithoutImages {
+			fmt.Printf(" * %s\n", stat.Dir.Name())
+		}
+		fmt.Println()
+	}
+
 	noImageTags := make(map[tagPath]struct{})
 	for _, stat := range statsWithoutImages {
 		for tag := range stat.Nfo.TagCounts {
@@ -38,6 +47,7 @@ func tagsAbsentInDirsWithoutImages(stats []*dirStats) []tagPath {
 		for _, tag := range tagsAbsentInDirsWithoutImages {
 			fmt.Printf(" * %s\n", tag)
 		}
+		fmt.Println()
 	}
 	return tagsAbsentInDirsWithoutImages
 }
