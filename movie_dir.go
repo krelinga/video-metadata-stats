@@ -40,3 +40,14 @@ func (d movieDir) HasImages() (bool, error) {
 	}
 	return false, nil
 }
+
+func (d movieDir) HasNfoFile() (bool, error) {
+	stat, err := os.Stat(d.NfoPath())
+	if err != nil {
+		if os.IsNotExist(err) {
+			return false, nil
+		}
+		return false, err
+	}
+	return !stat.IsDir(), nil
+}
