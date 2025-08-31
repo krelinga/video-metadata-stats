@@ -20,5 +20,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	tagsByImages(stats)
+	tags := tagsAbsentInDirsWithoutImages(stats)
+	for _, tag := range tags {
+		if err := examples(stats, tag); err != nil {
+			log.Fatal(err)
+		}
+	}
 }

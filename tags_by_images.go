@@ -5,7 +5,7 @@ import (
 	"slices"
 )
 
-func tagsByImages(stats []*dirStats) {
+func tagsAbsentInDirsWithoutImages(stats []*dirStats) []tagPath {
 	allTags := make(map[tagPath]struct{})
 	for _, stat := range stats {
 		for tag := range stat.Nfo.TagCounts {
@@ -32,9 +32,12 @@ func tagsByImages(stats []*dirStats) {
 		}
 	}
 
-	slices.Sort(tagsAbsentInDirsWithoutImages)
-	fmt.Println("Tags absent in dirs without images:")
-	for _, tag := range tagsAbsentInDirsWithoutImages {
-		fmt.Printf(" * %s\n", tag)
+	if len(tagsAbsentInDirsWithoutImages) > 0 {
+		slices.Sort(tagsAbsentInDirsWithoutImages)
+		fmt.Println("Tags absent in dirs without images:")
+		for _, tag := range tagsAbsentInDirsWithoutImages {
+			fmt.Printf(" * %s\n", tag)
+		}
 	}
+	return tagsAbsentInDirsWithoutImages
 }

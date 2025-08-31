@@ -6,6 +6,7 @@ import (
 
 type nfo struct {
 	TagCounts map[tagPath]int
+	Doc      *etree.Document
 }
 
 func makeTagCounts(doc *etree.Document) map[tagPath]int {
@@ -30,6 +31,7 @@ func readNfo(path string) (*nfo, error) {
 	}
 
 	info := &nfo{
+		Doc: doc,
 		TagCounts: makeTagCounts(doc),
 	}
 	return info, nil
