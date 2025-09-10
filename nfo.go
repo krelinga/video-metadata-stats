@@ -1,12 +1,27 @@
 package main
 
 import (
+	"fmt"
+	"strconv"
+
 	"github.com/beevik/etree"
 )
 
 type nfo struct {
 	TagCounts map[tagPath]int
 	Doc       *etree.Document
+}
+
+func (n *nfo) TmdbId() (int32, error) {
+	elem := n.Doc.FindElement("//movie/tmdbid")
+	if elem == nil {
+		return 0, fmt.Errorf("tmdbid not found")
+	}
+	id, err := strconv.ParseInt(elem.Text(), 10, 32)
+	if err != nil {
+		return 0, err
+	}
+	return int32(id), nil
 }
 
 func makeTagCounts(doc *etree.Document) map[tagPath]int {
