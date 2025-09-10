@@ -9,6 +9,7 @@ import (
 
 var modes = map[string]func() error{
 	"tagstats": tagStats,
+	"fanart":   fanart,
 }
 
 func main() {
