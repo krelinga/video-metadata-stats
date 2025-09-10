@@ -89,13 +89,14 @@ func countDirsByFanartSource(stats []*dirStats) error {
 	tmdbClient := tmdb.ClientOptions{
 		APIReadAccessToken: os.Getenv("TMDB_READ_ACCESS_TOKEN"),
 	}.NewClient()
+statloop:
 	for _, stat := range stats {
 		tmdbId, err := stat.Nfo.TmdbId()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Warning: Could not get TMDB ID for %s: %v\n", stat.Dir.Name(), err)
 			continue
 		}
-		movie, err := tmdb.GetMovie(context.Background(), tmdbClient, tmdbId)
+		movie, err := tmdb.GetMovie(context.Background(), tmdbClient, tmdbId, tmdb.WithAppendToResponse("images"))
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Warning: Could not fetch movie details for %s: %v\n", stat.Dir.Name(), err)
 			continue
@@ -103,13 +104,42 @@ func countDirsByFanartSource(stats []*dirStats) error {
 		for _, elem := range stat.Nfo.Doc.FindElementsPath(fanartTagPath) {
 			fanartUrl := elem.Text()
 			if backdropPath, err := movie.BackdropPath(); err == nil && strings.HasSuffix(fanartUrl, backdropPath) {
-				sourceToCount["TMDB Backdrop"]++
+				sourceToCount["TMDB Backdrop (Movie Level)"]++
 				continue
 			}
 			if posterPath, err := movie.PosterPath(); err == nil && strings.HasSuffix(fanartUrl, posterPath) {
 				sourceToCount["TMDB Poster"]++
 				continue
 			}
+			if images, err := movie.Images(); err != nil {
+				fmt.Fprintf(os.Stderr, "Warning: Could not fetch images for %s: %v\n", stat.Dir.Name(), err)
+			} else {
+				if backdrops, err := images.Backdrops(); err == nil {
+					for _, backdrop := range backdrops {
+						if filepath, err := backdrop.FilePath(); err == nil && strings.HasSuffix(fanartUrl, filepath) {
+							sourceToCount["TMDB Backdrop (Additional Images)"]++
+							continue statloop
+						}
+					}
+				}
+				if posters, err := images.Posters(); err == nil {
+					for _, poster := range posters {
+						if filepath, err := poster.FilePath(); err == nil && strings.HasSuffix(fanartUrl, filepath) {
+							sourceToCount["TMDB Poster (Additional Images)"]++
+							continue statloop
+						}
+					}
+				}
+				if logos, err := images.Logos(); err == nil {
+					for _, logo := range logos {
+						if filepath, err := logo.FilePath(); err == nil && strings.HasSuffix(fanartUrl, filepath) {
+							sourceToCount["TMDB Logo (Additional Images)"]++
+							continue statloop
+						}
+					}
+				}
+			}
+			sourceToCount["Unknown Source"]++
 		}
 	}
 
