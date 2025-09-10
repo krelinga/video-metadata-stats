@@ -1,8 +1,8 @@
 package main
 
 type dirStats struct {
-	Dir movieDir
-	Nfo *nfo
+	Dir       movieDir
+	Nfo       *nfo
 	HasImages bool
 }
 
@@ -18,8 +18,8 @@ func computeDirStats(dirs []movieDir) ([]*dirStats, error) {
 			return nil, err
 		}
 		stats = append(stats, &dirStats{
-			Dir:     dir,
-			Nfo:    nfo,
+			Dir:       dir,
+			Nfo:       nfo,
 			HasImages: hasImages,
 		})
 	}

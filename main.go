@@ -1,30 +1,38 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"os"
+	"strings"
 )
 
+var modes = map[string]func() error{
+	"tagstats": tagStats,
+}
+
 func main() {
-	dirs, err := listMovieDirs()
-	if err != nil {
+	if len(os.Args) != 2 {
+		printUsage()
+		return
+	}
+
+	mode := os.Args[1]
+	modeFunc, exists := modes[mode]
+	if !exists {
+		printUsage()
+		return
+	}
+
+	if err := modeFunc(); err != nil {
 		log.Fatal(err)
 	}
+}
 
-	dirsWithNfo, err := dirsWithNfo(dirs)
-	if err != nil {
-		log.Fatal(err)
+func printUsage() {
+	availableModes := make([]string, 0, len(modes))
+	for mode := range modes {
+		availableModes = append(availableModes, mode)
 	}
-
-	stats, err := computeDirStats(dirsWithNfo)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	tags := tagsAbsentInDirsWithoutImages(stats)
-
-	for _, tag := range tags {
-		if err := examples(stats, tag); err != nil {
-			log.Fatal(err)
-		}
-	}
+	fmt.Printf("Error: Invalid or missing mode argument.\nAvailable modes: %s\n", strings.Join(availableModes, ", "))
 }
