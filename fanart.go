@@ -89,6 +89,10 @@ func countDirsByFanartSource(stats []*dirStats) error {
 	tmdbClient := tmdb.ClientOptions{
 		APIReadAccessToken: os.Getenv("TMDB_READ_ACCESS_TOKEN"),
 	}.NewClient()
+
+	statWithFanartMatchingAnyImageBackdrop := 0
+	statWithoutFanartMatchingAnyImageBackdrop := 0
+
 statloop:
 	for _, stat := range stats {
 		tmdbId, err := stat.Nfo.TmdbId()
@@ -116,6 +120,26 @@ statloop:
 					return len(backdrops) > 0
 				}
 			}()
+			fanartMatchesAnyImageBackdrop := func() bool {
+				if images, err := movie.Images(); err != nil {
+					return false
+				} else if backdrops, err := images.Backdrops(); err != nil {
+					return false
+				} else {
+					for _, backdrop := range backdrops {
+						if filepath, err := backdrop.FilePath(); err == nil && strings.HasSuffix(fanartUrl, filepath) {
+							return true
+						}
+					}
+				}
+				return false
+			}()
+			if fanartMatchesAnyImageBackdrop {
+				statWithFanartMatchingAnyImageBackdrop++
+			} else {
+				statWithoutFanartMatchingAnyImageBackdrop++
+			}
+
 			if backdropPath, err := movie.BackdropPath(); err == nil && strings.HasSuffix(fanartUrl, backdropPath) {
 				key := fmt.Sprintf("TMDB Backdrop (Movie Level), movieHasBackdrop=%t, movieImagesHaveAnyBackdrop=%t", movieHasBackdrop, movieImagesHaveAnyBackdrop)
 				sourceToCount[key]++
@@ -173,6 +197,9 @@ statloop:
 	for _, kv := range sorted {
 		fmt.Printf(" * %s : %d\n", kv.k, kv.v)
 	}
+	fmt.Println()
+	fmt.Printf("Stats: Directories with fanart matching any image backdrop: %d\n", statWithFanartMatchingAnyImageBackdrop)
+	fmt.Printf("Stats: Directories without fanart matching any image backdrop: %d\n", statWithoutFanartMatchingAnyImageBackdrop)
 
 	return nil
 }
