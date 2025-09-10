@@ -103,8 +103,22 @@ statloop:
 		}
 		for _, elem := range stat.Nfo.Doc.FindElementsPath(fanartTagPath) {
 			fanartUrl := elem.Text()
+			movieHasBackdrop := func() bool {
+				_, err := movie.BackdropPath()
+				return err == nil
+			}()
+			movieImagesHaveAnyBackdrop := func() bool {
+				if images, err := movie.Images(); err != nil {
+					return false
+				} else if backdrops, err := images.Backdrops(); err != nil {
+					return false
+				} else {
+					return len(backdrops) > 0
+				}
+			}()
 			if backdropPath, err := movie.BackdropPath(); err == nil && strings.HasSuffix(fanartUrl, backdropPath) {
-				sourceToCount["TMDB Backdrop (Movie Level)"]++
+				key := fmt.Sprintf("TMDB Backdrop (Movie Level), movieHasBackdrop=%t, movieImagesHaveAnyBackdrop=%t", movieHasBackdrop, movieImagesHaveAnyBackdrop)
+				sourceToCount[key]++
 				continue
 			}
 			if posterPath, err := movie.PosterPath(); err == nil && strings.HasSuffix(fanartUrl, posterPath) {
@@ -117,7 +131,8 @@ statloop:
 				if backdrops, err := images.Backdrops(); err == nil {
 					for _, backdrop := range backdrops {
 						if filepath, err := backdrop.FilePath(); err == nil && strings.HasSuffix(fanartUrl, filepath) {
-							sourceToCount["TMDB Backdrop (Additional Images)"]++
+							key := fmt.Sprintf("TMDB Backdrop (Additional Images), movieHasBackdrop=%t, movieImagesHaveAnyBackdrop=%t", movieHasBackdrop, movieImagesHaveAnyBackdrop)
+							sourceToCount[key]++
 							continue statloop
 						}
 					}
