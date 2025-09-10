@@ -1,2 +1,10 @@
 github.com/beevik/etree v1.6.0 h1:u8Kwy8pp9D9XeITj2Z0XtA5qqZEmtJtuXZRQi+j03eE=
 github.com/beevik/etree v1.6.0/go.mod h1:bh4zJxiIr62SOf9pRzN7UUYaEDa9HEKafK25+sLc0Gc=
+github.com/krelinga/go-jsonflex v0.2.0 h1:49rxN2ErvT7JrW2gIHlIwa4VIyLvwBY/6AN4L9LYsnI=
+github.com/krelinga/go-jsonflex v0.2.0/go.mod h1:prTvBtZAyoXUOLysdDwPb5nFZgcuIaxm9iHJmSWTky8=
+github.com/krelinga/go-tmdb v0.3.0 h1:khmyZhaEqdmAkohFE0/5PgfvmN0Sigkn8l3dLpnrSRQ=
+github.com/krelinga/go-tmdb v0.3.0/go.mod h1:r1VZ5JhglkCdDzv4hs/BQT1ecz7pTiEYPqCl4KOJIh4=
+gopkg.in/dnaeon/go-vcr.v4 v4.0.4 h1:UNc8d1Ya2otEOU3DoUgnSLp0tXvBNE0FuFe86Nnzcbw=
+gopkg.in/dnaeon/go-vcr.v4 v4.0.4/go.mod h1:65yxh9goQVrudqofKtHA4JNFWd6XZRkWfKN4YpMx7KI=
+gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
+gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
