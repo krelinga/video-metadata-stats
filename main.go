@@ -8,8 +8,9 @@ import (
 )
 
 var modes = map[string]func() error{
-	"tagstats": tagStats,
-	"fanart":   fanart,
+	"tagstats":     tagStats,
+	"fanart":       fanart,
+	"thumbAspects": thumbAspects,
 }
 
 func main() {
