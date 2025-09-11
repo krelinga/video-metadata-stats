@@ -11,6 +11,7 @@ var modes = map[string]func() error{
 	"tagstats":     tagStats,
 	"fanart":       fanart,
 	"thumbAspects": thumbAspects,
+	"mpaa":         mpaa,
 }
 
 func main() {
