@@ -27,6 +27,7 @@ func thumbAspects() error {
 		return err
 	}
 	aspectsMap := make(map[string]int)
+	tmdbNonPosters := make([]*dirStats, 0)
 	thumbPath, err := etree.CompilePath("/movie/thumb")
 	if err != nil {
 		return err
@@ -53,6 +54,9 @@ func thumbAspects() error {
 			var urlPart string
 			if strings.Contains(parsed.Hostname(), "image.tmdb.org") {
 				urlPart = "tmdb"
+				if value != "poster" {
+					tmdbNonPosters = append(tmdbNonPosters, stat)
+				}
 			} else {
 				matches := urlPathRegex.FindStringSubmatch(parsed.Path)
 				if len(matches) != 2 {
@@ -80,6 +84,17 @@ func thumbAspects() error {
 	fmt.Println("Thumb Aspects and Directory counts:")
 	for _, kv := range sorted {
 		fmt.Printf(" * Aspect: %s, Directories: %d\n", kv.k, kv.v)
+	}
+
+	if len(tmdbNonPosters) > 0 {
+		fmt.Println()
+		slices.SortFunc(tmdbNonPosters, func(a, b *dirStats) int {
+			return cmp.Compare(a.Dir.Name(), b.Dir.Name())
+		})
+		fmt.Println("Directories with non-poster TMDB thumbs:")
+		for _, stat := range tmdbNonPosters {
+			fmt.Printf(" * %s\n", stat.Dir.Name())
+		}
 	}
 
 	return nil
