@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"fmt"
 	"slices"
+	"strings"
 
 	"github.com/beevik/etree"
 )
@@ -32,6 +33,7 @@ func mpaa() error {
 	if err != nil {
 		return err
 	}
+	nc17 := []*movieDir{}
 
 	counts := make(map[string]int)
 	for _, stat := range stats {
@@ -46,6 +48,10 @@ func mpaa() error {
 			mpaaValue = fmt.Sprintf("%d mpaa ratings", len(mpaas))
 		} else if mpaaValue = mpaas[0].Text(); len(mpaaValue) == 0 {
 			mpaaValue = "empty mpaa"
+		}
+
+		if strings.Contains(strings.ToLower(mpaaValue), "nc-17") {
+			nc17 = append(nc17, &stat.Dir)
 		}
 
 		key := fmt.Sprintf("certification=%s, mpaa=%s", certValue, mpaaValue)
@@ -66,6 +72,12 @@ func mpaa() error {
 	fmt.Println("MPAA/Certification counts:")
 	for _, kv := range kvs {
 		fmt.Printf(" * %s : %d\n", kv.k, kv.v)
+	}
+
+	fmt.Println()
+	fmt.Println("Examples of NC-17 ratings:")
+	for _, dir := range nc17 {
+		fmt.Printf(" * %s\n", dir.Name())
 	}
 
 	return nil
