@@ -3,7 +3,10 @@ package main
 import (
 	"cmp"
 	"fmt"
+	"net/url"
+	"regexp"
 	"slices"
+	"strings"
 
 	"github.com/beevik/etree"
 )
@@ -28,6 +31,10 @@ func thumbAspects() error {
 	if err != nil {
 		return err
 	}
+	urlPathRegex, err := regexp.Compile(`movies/\d+/([^/]+)/.*$`)
+	if err != nil {
+		return err
+	}
 	for _, stat := range stats {
 		for _, thumb := range stat.Nfo.Doc.FindElementsPath(thumbPath) {
 			aspect := thumb.SelectAttr("aspect")
@@ -38,7 +45,23 @@ func thumbAspects() error {
 			if len(value) == 0 {
 				continue
 			}
-			aspectsMap[value]++
+			rawThumbUrl := thumb.Text()
+			parsed, err := url.Parse(rawThumbUrl)
+			if err != nil {
+				return err
+			}
+			var urlPart string
+			if strings.Contains(parsed.Hostname(), "image.tmdb.org") {
+				urlPart = "tmdb"
+			} else {
+				matches := urlPathRegex.FindStringSubmatch(parsed.Path)
+				if len(matches) != 2 {
+					return fmt.Errorf("unexpected thumb URL format: %q in %q", rawThumbUrl, stat.Dir.Name())
+				}
+				urlPart = matches[1]
+			}
+			aspectKey := fmt.Sprintf("%s (%s)", value, urlPart)
+			aspectsMap[aspectKey]++
 		}
 	}
 
