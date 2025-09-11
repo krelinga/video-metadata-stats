@@ -34,6 +34,7 @@ func mpaa() error {
 		return err
 	}
 	nc17 := []*movieDir{}
+	nr := []*movieDir{}
 
 	counts := make(map[string]int)
 	for _, stat := range stats {
@@ -52,6 +53,8 @@ func mpaa() error {
 
 		if strings.Contains(strings.ToLower(mpaaValue), "nc-17") {
 			nc17 = append(nc17, &stat.Dir)
+		} else if strings.Contains(strings.ToLower(mpaaValue), "nr") {
+			nr = append(nr, &stat.Dir)
 		}
 
 		key := fmt.Sprintf("certification=%s, mpaa=%s", certValue, mpaaValue)
@@ -77,6 +80,12 @@ func mpaa() error {
 	fmt.Println()
 	fmt.Println("Examples of NC-17 ratings:")
 	for _, dir := range nc17 {
+		fmt.Printf(" * %s\n", dir.Name())
+	}
+
+	fmt.Println()
+	fmt.Println("Examples of NR ratings:")
+	for _, dir := range nr {
 		fmt.Printf(" * %s\n", dir.Name())
 	}
 
